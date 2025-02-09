@@ -1,0 +1,12 @@
+{
+  "name": "final-project-haim",
+  "version": "1.0.0",
+  "description": "backend of store",
+  "license": "ISC",
+  "author": "Elhanan",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  }
+}
