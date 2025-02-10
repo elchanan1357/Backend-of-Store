@@ -7,22 +7,29 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "test": "test",
+    "test": "jest --detectOpenHandles --forceExit",
+    "testCRUD": "tsc&& jest  --detectOpenHandles --forceExit ./src/test/testCRUD",
     "start": "tsc&& node dist/src/app.js",
     "devstart": "tsc&& nodemon dist/src/app.js",
     "del": "npx ts-node src/app.ts"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.0",
     "node": "^23.7.0",
     "nodemon": "^3.1.9"
   },
   "devDependencies": {
     "@types/express": "^4.17.1",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
