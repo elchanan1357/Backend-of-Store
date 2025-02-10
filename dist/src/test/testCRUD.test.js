@@ -16,10 +16,13 @@ const supertest_1 = __importDefault(require("supertest"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const server_1 = __importDefault(require("../server"));
 const userModel_1 = __importDefault(require("../models/userModel"));
-const name = "eli";
-const phone = 55244484;
-const email = "eli@gmail.com";
-const password = "eli255";
+const bcrypt_1 = __importDefault(require("bcrypt"));
+let user = {
+    name: "eli",
+    phone: 55244484,
+    email: "eli@gmail.com",
+    password: "eli255",
+};
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield userModel_1.default.deleteMany({});
     console.log("start");
@@ -29,33 +32,24 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     mongoose_1.default.connection.close();
     console.log("finish");
 }));
-describe("Test of user crud", () => {
-    test("test of add post", () => __awaiter(void 0, void 0, void 0, function* () {
-        const res = yield (0, supertest_1.default)(server_1.default).
-            post("/user/addUser").
-            send({
-            name: name,
-            phone: phone,
-            email: email,
-            password: password
-        });
+describe("Test of authentication of user", () => {
+    test("user register", () => __awaiter(void 0, void 0, void 0, function* () {
+        const res = yield (0, supertest_1.default)(server_1.default).post("/user/register").send(user);
         expect(res.status).toEqual(200);
-        expect(res.body.name).toEqual(name);
-        expect(res.body.phone).toEqual(phone);
-        expect(res.body.email).toEqual(email);
-        expect(res.body.password).toEqual(password);
+        expect(res.body.name).toEqual(user.name);
+        expect(res.body.phone).toEqual(user.phone);
+        expect(res.body.email).toEqual(user.email);
+        const isMatch = yield bcrypt_1.default.compare(user.password, res.body.password);
+        expect(isMatch).toBe(true);
     }));
-    test("test of fail in add post", () => __awaiter(void 0, void 0, void 0, function* () {
-        const res = yield (0, supertest_1.default)(server_1.default).
-            post("/user/addUser").
-            send({
-            name: name,
-            email: email,
-            password: password
-        });
+    test("Fail in user register", () => __awaiter(void 0, void 0, void 0, function* () {
+        user.phone = null;
+        const res = yield (0, supertest_1.default)(server_1.default).post("/user/register").send(user);
         expect(res.status).not.toEqual(200);
     }));
-    test(("test of get post by email"), () => __awaiter(void 0, void 0, void 0, function* () {
+    test("user login", () => __awaiter(void 0, void 0, void 0, function* () {
+        // const res = request(app).post("/user/login").send(user);
+        // expect(res.status).toEqual(200)
     }));
 });
 //# sourceMappingURL=testCRUD.test.js.map

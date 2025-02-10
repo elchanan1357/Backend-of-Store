@@ -8,10 +8,10 @@
   "main": "app.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
-    "testCRUD": "tsc&& jest  --detectOpenHandles --forceExit ./src/test/testCRUD",
+    "testAuth": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testCRUD",
     "start": "tsc&& node dist/src/app.js",
     "devstart": "tsc&& nodemon dist/src/app.js",
-    "del": "npx ts-node src/app.ts"
+    "server": "npx ts-node src/app.ts"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",

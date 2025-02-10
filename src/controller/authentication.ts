@@ -7,9 +7,14 @@ import { User } from "../types/user";
 let user: User;
 
 const register = async (req: Request, res: Response) => {
-  user = req?.body
-  
-  if (user.name == null || user.phone == null || user.email == null || user.password == null)
+  user = req?.body;
+
+  if (
+    user.name == null ||
+    user.phone == null ||
+    user.email == null ||
+    user.password == null
+  )
     res.status(400).send({ error: "please provide all values" });
 
   try {
