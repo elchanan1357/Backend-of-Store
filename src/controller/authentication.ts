@@ -1,6 +1,7 @@
 import { Response, Request } from "express";
 import UserModel from "../models/userModel";
 import bcrypt from "bcrypt";
+import env from "dotenv";
 import jwt from "jsonwebtoken";
 import { User } from "../types/user";
 
@@ -14,8 +15,10 @@ const register = async (req: Request, res: Response) => {
     user.phone == null ||
     user.email == null ||
     user.password == null
-  )
+  ) {
     res.status(400).send({ error: "please provide all values" });
+    return;
+  }
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -35,8 +38,10 @@ const register = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   user = req?.body;
 
-  if (user.email == null || user.password == null)
+  if (user.email == null || user.password == null) {
     res.status(400).send({ error: "please provide email and password" });
+    return;
+  }
 
   try {
     const findUser = await UserModel.findOne({ email: user.email });
@@ -51,11 +56,21 @@ const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const accessToken = jwt.sign(
-      { _id: findUser._id.toString() },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: process.env.JWT_TOKEN_EXPIRATION }
-    );
+    let accessToken:string = null
+    if(req.body.isTest){
+      //for check expired time in test
+      accessToken = jwt.sign(
+        { _id: findUser._id.toString() },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: process.env.TOKEN_EXPIRATION_TEST }
+      );
+    }else{
+      accessToken = jwt.sign(
+        { _id: findUser._id.toString() },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: process.env.TOKEN_EXPIRATION }
+      );
+    }
 
     res.status(200).send({
       accessToken: accessToken,
@@ -65,6 +80,15 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
+const getAllData = async (req: Request, res: Response) => {
+  try {
+    const users = await UserModel.find({});
+    res.status(200).send(users);
+  } catch (err) {
+    res.status(400).send({ err: "fail in get all data" });
+  }
+};
+
 const logout = async (req: Request, res: Response) => {};
 
-export = { login, register };
+export = { login, register, getAllData };

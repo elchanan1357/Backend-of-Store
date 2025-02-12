@@ -16,6 +16,10 @@ Content-Type: application/json
 {
     "name": "eli",
     "phone":  552884,
-    "email": "eli@gmail.com",
+    "email": "eli1@gmail.com",
     "password":  "12345"
 }
+
+###
+POST  http://localhost:3000/user/getUsers
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2FjYzAzYjM1YjZmNzI3NGY3MzdhNWMiLCJpYXQiOjE3MzkzNzUyNTMsImV4cCI6MTczOTM3ODg1M30.5tz8LhU5AlL3lrpAK_JY47N4EEmnXA2IuqpmxITykFs

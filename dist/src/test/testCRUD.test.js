@@ -23,6 +23,7 @@ let user = {
     email: "eli@gmail.com",
     password: "eli255",
 };
+let accessToken = null;
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield userModel_1.default.deleteMany({});
     console.log("start");
@@ -42,14 +43,49 @@ describe("Test of authentication of user", () => {
         const isMatch = yield bcrypt_1.default.compare(user.password, res.body.password);
         expect(isMatch).toBe(true);
     }));
-    test("Fail in user register", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("Not send all data in register", () => __awaiter(void 0, void 0, void 0, function* () {
         user.phone = null;
         const res = yield (0, supertest_1.default)(server_1.default).post("/user/register").send(user);
+        expect(res.status).toEqual(400);
+    }));
+    test("login with wrong password", () => __awaiter(void 0, void 0, void 0, function* () {
+        const res = yield (0, supertest_1.default)(server_1.default)
+            .post("/user/login")
+            .send({
+            email: user.email,
+            password: user.password + "k",
+        });
         expect(res.status).not.toEqual(200);
+        accessToken = res.body.accessToken;
+        expect(accessToken).toBe(undefined);
     }));
     test("user login", () => __awaiter(void 0, void 0, void 0, function* () {
-        // const res = request(app).post("/user/login").send(user);
-        // expect(res.status).toEqual(200)
+        const res = yield (0, supertest_1.default)(server_1.default).post("/user/login").send(user);
+        expect(res.status).toEqual(200);
+        accessToken = res.body.accessToken;
+        expect(accessToken).not.toBe(null);
+    }));
+    test("Not send email or password in login", () => __awaiter(void 0, void 0, void 0, function* () {
+        user.password = null;
+        const res = yield (0, supertest_1.default)(server_1.default).post("/user/login").send(user);
+        expect(res.status).not.toEqual(200);
+    }));
+    test("check token", () => __awaiter(void 0, void 0, void 0, function* () {
+        const res = yield (0, supertest_1.default)(server_1.default)
+            .post("/user/login")
+            .set("Authorization", "jwt " + accessToken);
+        expect(res.status).toEqual(200);
+    }));
+    jest.setTimeout(30000);
+    test("check expiration time of token", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield new Promise((r) => setTimeout(r, 10000));
+        user.password = "eli255";
+        const res = yield (0, supertest_1.default)(server_1.default).post("/user/login").send({
+            email: user.email,
+            password: user.password,
+            isTest: true,
+        });
+        expect(res.status).toEqual(200);
     }));
 });
 //# sourceMappingURL=testCRUD.test.js.map
