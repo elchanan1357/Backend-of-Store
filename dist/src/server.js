@@ -4,13 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const express_1 = __importDefault(require("express"));
 const server = (0, express_1.default)();
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
 const body_parser_1 = __importDefault(require("body-parser"));
 server.use(body_parser_1.default.urlencoded({ extended: true }));
 server.use(body_parser_1.default.json());
 const mongoose_1 = __importDefault(require("mongoose"));
-mongoose_1.default.connect(process.env.DB_URL);
+const env_1 = require("./config/env");
+mongoose_1.default.connect(env_1.config.db_url);
 const db = mongoose_1.default.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", () => console.log("connect to DB"));

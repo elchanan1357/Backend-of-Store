@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const env_1 = require("../config/env");
 const middleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeaders = req.headers.authorization;
     if (authHeaders == null)
@@ -20,7 +21,7 @@ const middleware = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     if (accessToken == null)
         res.status(400).send({ error: "authentication missing" });
     try {
-        const user = jsonwebtoken_1.default.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+        const user = jsonwebtoken_1.default.verify(accessToken, env_1.config.access_token);
         req.body.userID = user._id;
         next();
     }

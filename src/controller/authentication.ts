@@ -1,9 +1,12 @@
 import { Response, Request } from "express";
 import UserModel from "../models/userModel";
 import bcrypt from "bcrypt";
-import env from "dotenv";
 import jwt from "jsonwebtoken";
 import { User } from "../types/user";
+import { config } from "../config/env";
+// import cookie from "cookie"
+import * as cookie from 'cookie';
+
 
 let user: User;
 
@@ -56,26 +59,35 @@ const login = async (req: Request, res: Response) => {
       return;
     }
 
-    let accessToken:string = null
-    if(req.body.isTest){
+    let accessToken: string = null;
+    if (req.body.isTest) {
       //for check expired time in test
-      accessToken = jwt.sign(
+        accessToken = jwt.sign(
         { _id: findUser._id.toString() },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: process.env.TOKEN_EXPIRATION_TEST }
+        config.access_token,
+        { expiresIn: config.test_expiration }
       );
-    }else{
+    } else {
       accessToken = jwt.sign(
         { _id: findUser._id.toString() },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: process.env.TOKEN_EXPIRATION }
+        config.access_token,
+        { expiresIn: config.token_expiration }
       );
     }
+
+    const cookieOption = {
+      secure: true,
+      httpOnly: true,
+    }
+    
+    console.log(cookie);
+    const cookieString = cookie.serialize('accessToken',accessToken,cookieOption);
 
     res.status(200).send({
       accessToken: accessToken,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).send({ error: "Fail in login" });
   }
 };

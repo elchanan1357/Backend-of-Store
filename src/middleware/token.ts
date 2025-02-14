@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { config } from "../config/env";
 
 const middleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeaders = req.headers.authorization;
@@ -10,7 +11,7 @@ const middleware = async (req: Request, res: Response, next: NextFunction) => {
     res.status(400).send({ error: "authentication missing" });
 
   try {
-    const user = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET) as {
+    const user = jwt.verify(accessToken, config.access_token) as {
       _id: string;
     };
 

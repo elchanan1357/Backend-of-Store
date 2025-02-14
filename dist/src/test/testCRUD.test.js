@@ -71,10 +71,10 @@ describe("Test of authentication of user", () => {
         expect(res.status).not.toEqual(200);
     }));
     test("check token", () => __awaiter(void 0, void 0, void 0, function* () {
-        const res = yield (0, supertest_1.default)(server_1.default)
-            .post("/user/login")
+        const users = yield (0, supertest_1.default)(server_1.default)
+            .post("/user/getUsers")
             .set("Authorization", "jwt " + accessToken);
-        expect(res.status).toEqual(200);
+        expect(users.status).toEqual(200);
     }));
     jest.setTimeout(30000);
     test("check expiration time of token", () => __awaiter(void 0, void 0, void 0, function* () {
