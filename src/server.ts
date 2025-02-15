@@ -1,22 +1,40 @@
-import express from "express";
-const server = express();
+import express from 'express';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
 
-import dotenv from "dotenv";
+// Configure environment variables
 dotenv.config();
 
-import bodyParser from "body-parser";
+// Create Express server
+const server = express();
+
+// Middleware to parse body data
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 
-import mongoose from "mongoose";
-mongoose.connect(process.env.DB_URL);
+// Serve static files from 'public' directory
+server.use(express.static('public'));
+
+// Connect to MongoDB
+mongoose.connect(process.env.DB_URL)
+    .then(() => console.log("Connected to MongoDB"))
+    .catch(err => console.error("Could not connect to MongoDB", err));
+
+// MongoDB connection error handling
 const db = mongoose.connection;
-db.on("error", (error) => console.log(error));
-db.once("open", () => console.log("connect to DB"));
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-import userRouter from "./routers/userRouter";
-server.use("/user", userRouter);
+// Import routers
+import userRouter from './routers/userRouter';
 
+// Use routers
+server.use('/user', userRouter);
 
+// Start server listening on provided port
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
 
-export = server;
+export default server;

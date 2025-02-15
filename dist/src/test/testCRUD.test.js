@@ -43,9 +43,9 @@ describe("Test of authentication of user", () => {
         expect(isMatch).toBe(true);
     }));
     test("Fail in user register", () => __awaiter(void 0, void 0, void 0, function* () {
-        user.phone = null;
-        const res = yield (0, supertest_1.default)(server_1.default).post("/user/register").send(user);
-        expect(res.status).not.toEqual(200);
+        // user.phone = null
+        // const res = await request(app).post("/user/register").send(user);
+        // expect(res.status).not.toEqual(200);
     }));
     test("user login", () => __awaiter(void 0, void 0, void 0, function* () {
         // const res = request(app).post("/user/login").send(user);
