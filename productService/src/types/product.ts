@@ -1,7 +1,8 @@
 export enum ProductCategory {
-    PHONES = 'phones',
+    SMARTPHONES = 'smartphones',
     TABLETS = 'tablets',
     LAPTOPS = 'laptops',
+    ACCESSORIES = 'accessories'
 }
 
 export interface Product {
