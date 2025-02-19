@@ -11,6 +11,8 @@ import { setupAdminProductsRoutes } from "./controllers/admin";
 import { authMiddleware } from "./middlewares/auth";
 import { rolesMiddleware } from "./middlewares/role";
 import { Role } from "./types/user";
+import { setupInternalProductsRoutes } from "./controllers/internal";
+import { validateInternalTokenMiddleware } from "./middlewares/validateInternalToken";
 
 export const createHttpServer = () => {
   const app = express();
@@ -26,6 +28,7 @@ export const createHttpServer = () => {
   
   app.use("/products", setupProductsRoutes());
   app.use("/admin/products", authMiddleware, rolesMiddleware([Role.Admin]), setupAdminProductsRoutes());
+  app.use("/internal/products", validateInternalTokenMiddleware, setupInternalProductsRoutes())
   
   // must be after all routes for catch all unmatched routes
   app.use(notFoundMiddleware);
