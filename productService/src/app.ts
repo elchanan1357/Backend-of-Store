@@ -1,18 +1,32 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import { config } from "./utils/config";
+import { mongoProvider } from "./providers/mongo.provider";
 import { createHttpServer } from "./server";
 
-const port = 3000
+const { port } = config;
 
 const main = async () => {
-  createHttpServer().listen(port, () => {
-    console.log(`Server running on ${port}`);
-  });    
+  try {
+    await mongoProvider.connect();
+
+    createHttpServer().listen(port, () => {
+      console.log(`Server running on ${port}`);
+    });
+  } catch (error) {
+      console.error('Failed to start:', error);
+  }       
 }
 
 const cleanup = async (exitCode: number = 0) => {
-  process.exit(exitCode);
+  try {
+    await mongoProvider.disconnect();
+  } catch (error) {
+    console.error('Failed to disconnect from Mongo: ', error);
+  } finally {
+    process.exit(exitCode);
+  }
 }
 
 process.on('SIGINT', () => {
@@ -24,4 +38,3 @@ process.on('SIGTERM', () => {
 })
 
 main();
-
