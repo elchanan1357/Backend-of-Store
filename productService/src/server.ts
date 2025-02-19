@@ -7,6 +7,10 @@ import { setupProductsRoutes } from "./controllers/products";
 import { config } from "./utils/config";
 import { notFoundMiddleware } from "./middlewares/notFound";
 import { errorHandlerMiddleware } from "./middlewares/errorHandler";
+import { setupAdminProductsRoutes } from "./controllers/admin";
+import { authMiddleware } from "./middlewares/auth";
+import { rolesMiddleware } from "./middlewares/role";
+import { Role } from "./types/user";
 
 export const createHttpServer = () => {
   const app = express();
@@ -21,6 +25,7 @@ export const createHttpServer = () => {
   app.use(express.urlencoded({ extended: true }));
   
   app.use("/products", setupProductsRoutes());
+  app.use("/admin/products", authMiddleware, rolesMiddleware([Role.Admin]), setupAdminProductsRoutes());
   
   // must be after all routes for catch all unmatched routes
   app.use(notFoundMiddleware);
