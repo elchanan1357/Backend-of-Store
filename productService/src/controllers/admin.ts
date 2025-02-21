@@ -9,9 +9,11 @@ import { validateRequestMiddleware } from "../middlewares/validateRequest";
 export const setupAdminProductsRoutes = (): Router => {
   const router = Router();
 
-  router.get("/", validateRequestMiddleware(GetProductsQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {    
+  router.get("/", validateRequestMiddleware(GetProductsQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {
+    const { limit, offset } = req.query as GetProductsQueryDto;
+    
     try {
-      const products = [] as any
+      const products = await productService.getProducts(true, limit, offset);
     
       res.json(successResponse(products));
     } catch (error: any) {

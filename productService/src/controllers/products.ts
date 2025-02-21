@@ -15,7 +15,7 @@ export const setupProductsRoutes = (): Router => {
     const { categories, limit, offset } = req.query as unknown as GetProductsByCategoriesQueryDto;
     
     try {
-      const productsByCategory = {}
+      const productsByCategory = await productService.getProductsByCategories(categories, offset, limit);
     
       res.json(successResponse(productsByCategory));
     } catch (error: any) {
@@ -27,7 +27,7 @@ export const setupProductsRoutes = (): Router => {
     const { limit, offset } = req.query as GetProductsQueryDto;
     
     try {
-      const products: any = [];
+      const products = await productService.getProducts(false, limit, offset);
     
       res.json(successResponse(products));
     } catch (error: any) {
