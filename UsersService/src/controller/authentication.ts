@@ -74,6 +74,7 @@ const login = async (req: Request, res: Response) => {
       .cookie(config.auth_token_key, accessToken, {
         sameSite: "strict",
         httpOnly: true,
+        expires: new Date(Date.now() + 60*60*1000),
       })
       .status(200)
       .send(resUser);
@@ -88,4 +89,4 @@ const logout = async (req: Request, res: Response) => {
   res.status(200).send("Token cookie removed");
 };
 
-export = { login, register };
+export = { login, register,logout };

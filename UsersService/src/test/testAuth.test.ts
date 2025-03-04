@@ -4,6 +4,7 @@ import app from "../server";
 import UserModel from "../models/userModel";
 import { User, Role } from "../types/user";
 import bcrypt from "bcrypt";
+import { config } from "../utils/config";
 
 const user: User = {
   name: "eli",
@@ -56,6 +57,20 @@ describe("Test of authentication of user", () => {
   test("user login", async () => {
     const res = await request(app).post("/user/login").send(user);
     expect(res.status).toEqual(200);
+
+    const cookieToken = res.headers["set-cookie"][0];
+    expect(cookieToken.split("=")[0]).toEqual(config.auth_token_key);
+
+    const cookieHeader = res.headers["set-cookie"][0].split("; ");
+    const expireVal = cookieHeader.find((item: string) =>
+      item.startsWith("Expires=")
+    );
+    expect(expireVal).toBeDefined();
+
+    const expireTime = new Date(expireVal.split("=")[1]);
+    const now = new Date();
+    expect(expireTime.getTime()).toBeGreaterThan(now.getTime());
+
     const resUser = res.body;
     const tempUser = { ...user };
     delete tempUser.password;
@@ -68,25 +83,22 @@ describe("Test of authentication of user", () => {
 
     const res = await request(app).post("/user/login").send(tempUser);
     expect(res.status).not.toEqual(200);
+    expect(res.headers["set-cookie"]).toBeUndefined();
   });
 
-  // test("check token", async () => {
-  //   const users = await request(app)
-  //     .post("/user/getUsers")
-  //     .set("Authorization", "jwt " + accessToken);
-  //   expect(users.status).toEqual(200);
-  // });
+  test("check logout", async () => {
+    const res = await request(app).get("/user/logout");
+    const cookieToken = res.headers["set-cookie"][0];
+    expect(cookieToken.split("=")[0]).toEqual(config.auth_token_key);
 
-  // jest.setTimeout(30000);
-  // test("check expiration time of token", async () => {
-  //   await new Promise((r) => setTimeout(r, 10000));
+    const cookieHeader = res.headers["set-cookie"][0].split("; ");
+    const expireVal = cookieHeader.find((item: string) =>
+      item.startsWith("Expires=")
+    );
+    expect(expireVal).toBeDefined();
 
-  //   user.password = "eli255";
-  //   const res = await request(app).post("/user/login").send({
-  //     email: user.email,
-  //     password: user.password,
-  //     isTest: true,
-  //   });
-  //   expect(res.status).toEqual(200);
-  // });
+    const expireTime = new Date(expireVal.split("=")[1]);
+    const now = new Date();
+    expect(expireTime.getTime()).not.toBeGreaterThan(now.getTime());
+  });
 });
