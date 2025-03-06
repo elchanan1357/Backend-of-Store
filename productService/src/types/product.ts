@@ -13,4 +13,7 @@ export interface Product {
     img?: string;
     mkt: string;
     category: ProductCategory;
+    logo: string,
+    company: string,
+    color: string,
 }

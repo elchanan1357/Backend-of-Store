@@ -21,7 +21,10 @@ class ProductService {
                 price: "$price",
                 description: "$description",
                 img: "$img",
-                mkt: "$mkt"
+                mkt: "$mkt",
+                logo: "$logo",
+                company: "$company",
+                color: "$color",
               }
             }
           }
@@ -52,7 +55,10 @@ class ProductService {
         name: 1,
         description: 1,
         mkt: 1,
-        _id: 1
+        _id: 1,
+        logo: 1,
+        company: 1,
+        color: 1,
     };
 
     if (isAdmin) {
