@@ -1,12 +1,39 @@
 import userModel from "../models/userModel";
 import { Request, Response } from "express";
 
+const findUser = async (res: Response, email: string) => {
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      console.log("Not find user in favorite");
+      res.status(400).send("Not find user");
+      return null;
+    }
+
+    console.log("find user");
+    return user;
+  } catch (err) {
+    console.log("Fail in find user");
+    res.status(400).send("Fail in find user");
+    return null;
+  }
+};
+
 const getAllFavorites = async (req: Request, res: Response) => {
-  const {email}=req.body;
-  
+  const { email } = req.body;
+
+  if (!email) {
+    console.log("Please provide me your details");
+    res.status(400).send("Please provide me your details");
+    return;
+  }
 
   try {
-    const favorites = await userModel.find({});
+    const user = await findUser(res, email);
+    if (!user) return;
+
+    const favorites = user.favorites;
+    console.log("get favorites");
     res.status(200).send(favorites);
   } catch (err) {
     console.log("Fail in get all favorite");
@@ -22,12 +49,8 @@ const addToFavorites = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      console.log("Not find user in favorite");
-      res.status(400).send("Not find user");
-      return;
-    }
+    const user = await findUser(res, email);
+    if (!user) return;
 
     if (!user.favorites.includes(mkt)) {
       user.favorites.push(mkt);
