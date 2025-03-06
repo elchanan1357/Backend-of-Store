@@ -1,6 +1,9 @@
 import express from "express";
 const server = express();
 
+import cors from 'cors'
+server.use(cors())
+
 import bodyParser from "body-parser";
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());

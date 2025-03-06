@@ -23,7 +23,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: Role,
     required: true,
-  }
+  },
+  favorite:{
+    type: [String],
+  },
+  cart:{
+    type: [String],
+  },
 });
 
 export = mongoose.model("User", userSchema);
