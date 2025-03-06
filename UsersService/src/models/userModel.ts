@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     enum: Role,
     required: true,
   },
-  favorite:{
+  favorites:{
     type: [String],
   },
   cart:{
