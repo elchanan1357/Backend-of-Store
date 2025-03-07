@@ -66,6 +66,31 @@ const addToFavorites = async (req: Request, res: Response) => {
   }
 };
 
+const removeFavorite = async (req: Request, res: Response) => {
+  console.log("play")
+  const { email, mkt } = req.body;
+  if (!valueIsNull(res, email) || !valueIsNull(res, mkt)) return;
+
+  try {
+    const user = await findUser(res, email);
+    if (!user) return;
+
+    if (user.favorites.includes(mkt)) {
+      user.favorites = user.favorites.filter((item)=>item != mkt)
+      user.save();
+      console.log("remove product from favorite");
+      res.status(200).send(`remove product from favorite`);
+      return;
+    } else {
+      console.log("Not find product");
+      res.status(400).send("Not find product");
+      return;
+    }
+  } catch (err) {
+    console.log("Fail in remove product from favorite");
+  }
+};
+
 const getAllCart = async (req: Request, res: Response) => {
   try {
   } catch (err) {
@@ -80,4 +105,13 @@ const addToCart = async (req: Request, res: Response) => {
   }
 };
 
-export = { getAllFavorites, addToFavorites, getAllCart, addToCart };
+const removeFromCart = async (req: Request, res: Response) => {};
+
+export = {
+  getAllFavorites,
+  addToFavorites,
+  removeFavorite,
+  getAllCart,
+  addToCart,
+  removeFromCart,
+};

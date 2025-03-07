@@ -3,10 +3,10 @@ POST  http://localhost:3000/user/register
 Content-Type: application/json 
 
 {
-    "name": "Mendy",
+    "name": "Haim",
     "phone":  596375,
-    "email": "mendy@gmail.com",
-    "password":  "mendy12345"
+    "email": "Haim@gmail.com",
+    "password":  "Haim135624"
 }
 
 ###
@@ -14,34 +14,34 @@ POST  http://localhost:3000/user/login
 Content-Type: application/json 
 
 {
-    "name": "eli2",
-    "phone":  552884,
-    "email": "eli2@gmail.com",
-    "password":  "12345"
+    "name": "Haim",
+    "phone":  596375,
+    "email": "Haim@gmail.com",
+    "password":  "Haim135624"
 }
 
+###
+POST  http://localhost:3000/user/addFavorite
+Content-Type: application/json 
+
+{
+    "email": "Haim@gmail.com",
+    "mkt":"new3"
+}
 
 ###
 GET  http://localhost:3000/user/favorites
 Content-Type: application/json 
 
 {
-   "email": "eli2@gmail.com"
+   "email": "Haim@gmail.com"
 }
 
 ###
-POST  http://localhost:3000/user/addFavorite
+POST  http://localhost:3000/user/removeFromFavorite
 Content-Type: application/json 
 
 {
-    "email": "eli2@gmail.com",
-    "mkt":"new3"
-}
-
-###
-POST  http://localhost:3000/user/addFavorite
-Content-Type: application/json 
-
-{
+    "email": "Haim@gmail.com",
     "mkt":"new3"
 }
