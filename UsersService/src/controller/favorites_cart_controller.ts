@@ -92,8 +92,15 @@ const removeFavorite = async (req: Request, res: Response) => {
 };
 
 const getAllCart = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  if (!valueIsNull(res, email)) return;
+
   try {
-  } catch (err) {
+    const user = await findUser(res, email);
+    if (!user) return;
+
+    res.status(200).send({ cart: user.cart });
+  }  catch (err) {
     console.log("Fail in get all cart");
   }
 };

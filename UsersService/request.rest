@@ -45,3 +45,11 @@ Content-Type: application/json
     "email": "Haim@gmail.com",
     "mkt":"new3"
 }
+
+###
+GET  http://localhost:3000/user/cart
+Content-Type: application/json 
+
+{
+   "email": "eli2@gmail.com"
+}
