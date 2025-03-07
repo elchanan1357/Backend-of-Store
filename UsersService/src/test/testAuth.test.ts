@@ -15,12 +15,12 @@ const user: User = {
 };
 
 beforeAll(async () => {
-  await UserModel.deleteMany({});
+  // await UserModel.deleteMany({});
   console.log("start");
 });
 
 afterAll(async () => {
-  await UserModel.deleteMany({});
+  // await UserModel.deleteMany({});
   mongoose.connection.close();
   console.log("finish");
 });
