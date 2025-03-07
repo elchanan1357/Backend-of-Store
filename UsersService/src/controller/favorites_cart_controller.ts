@@ -19,22 +19,24 @@ const findUser = async (res: Response, email: string) => {
   }
 };
 
+const valueIsNull = (res: Response, value: string): boolean => {
+  if (!value) {
+    console.log("Please provide me data");
+    res.status(400).send("Please provide me email and mkt");
+    return false;
+  }
+  return true;
+};
+
 const getAllFavorites = async (req: Request, res: Response) => {
   const { email } = req.body;
-
-  if (!email) {
-    console.log("Please provide me your details");
-    res.status(400).send("Please provide me your details");
-    return;
-  }
+  if (!valueIsNull(res, email)) return;
 
   try {
     const user = await findUser(res, email);
     if (!user) return;
 
-    const favorites = user.favorites;
-    console.log("get favorites");
-    res.status(200).send(favorites);
+    res.status(200).send({ favorites: user.favorites });
   } catch (err) {
     console.log("Fail in get all favorite");
   }
@@ -42,11 +44,7 @@ const getAllFavorites = async (req: Request, res: Response) => {
 
 const addToFavorites = async (req: Request, res: Response) => {
   const { email, mkt } = req.body;
-  if (!email || !mkt) {
-    console.log("Please provide me data");
-    res.status(400).send("Please provide me email and mkt");
-    return;
-  }
+  if (!valueIsNull(res, email) || !valueIsNull(res, mkt)) return;
 
   try {
     const user = await findUser(res, email);
@@ -56,7 +54,7 @@ const addToFavorites = async (req: Request, res: Response) => {
       user.favorites.push(mkt);
       user.save();
       console.log("Product added to favorites");
-      res.status(200).send("Product added to favorites");
+      res.status(200).send(`Product added to favorites`);
       return;
     } else {
       console.log("Product already in favorites");

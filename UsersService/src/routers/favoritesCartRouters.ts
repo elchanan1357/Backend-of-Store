@@ -3,7 +3,7 @@ const router = express.Router();
 
 import FavoritesCart = require("../controller/favorites_cart_controller");
 
-router.get("/favorite", FavoritesCart.getAllFavorites);
+router.get("/favorites", FavoritesCart.getAllFavorites);
 router.post("/addFavorite", FavoritesCart.addToFavorites);
 
 router.get("/cart", FavoritesCart.getAllCart);

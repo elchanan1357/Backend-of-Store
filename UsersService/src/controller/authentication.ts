@@ -9,6 +9,7 @@ const register = async (req: Request, res: Response) => {
   const { name, email, phone, password } = req?.body || {};
 
   if (name == null || phone == null || email == null || password == null) {
+    console.log("Please provide me all data");
     res.status(400).send({ error: "please provide all values" });
     return;
   }
@@ -20,7 +21,9 @@ const register = async (req: Request, res: Response) => {
     const encryptPassword = await bcrypt.hash(user.password, salt);
     user.password = encryptPassword;
 
+    console.log("the password encrypt");
     let newUser = new UserModel(user);
+    console.log(newUser);
     newUser = await newUser.save();
 
     console.log("the user register in success");
@@ -74,7 +77,7 @@ const login = async (req: Request, res: Response) => {
       .cookie(config.auth_token_key, accessToken, {
         sameSite: "strict",
         httpOnly: true,
-        expires: new Date(Date.now() + 60*60*1000),
+        expires: new Date(Date.now() + 60 * 60 * 1000),
       })
       .status(200)
       .send(resUser);
@@ -89,4 +92,4 @@ const logout = async (req: Request, res: Response) => {
   res.status(200).send("Token cookie removed");
 };
 
-export = { login, register,logout };
+export = { login, register, logout };
