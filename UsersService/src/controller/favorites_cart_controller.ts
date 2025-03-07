@@ -78,8 +78,8 @@ const removeFavorite = async (req: Request, res: Response) => {
     if (user.favorites.includes(mkt)) {
       user.favorites = user.favorites.filter((item)=>item != mkt)
       user.save();
-      console.log("remove product from favorite");
-      res.status(200).send(`remove product from favorite`);
+      console.log("Remove product from favorite");
+      res.status(200).send(`Remove product from favorite`);
       return;
     } else {
       console.log("Not find product");

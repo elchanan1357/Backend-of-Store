@@ -12,15 +12,17 @@ const user: User = {
   role: Role.User,
 };
 
-const removeFavorites = async (email: string) => {
+const newFavorite = { email: user.email, mkt: "new" };
+
+const removeFavoritesFromDB = async (email: string) => {
   let userDB = await UserModel.findOne({ email });
   userDB.favorites = [];
   userDB.save();
 };
 
 beforeAll(async () => {
-  await removeFavorites(user.email);
-  await removeFavorites("mendy@gmail.com");
+  await removeFavoritesFromDB(user.email);
+  await removeFavoritesFromDB("mendy@gmail.com");
 
   console.log("start");
 });
@@ -32,7 +34,6 @@ afterAll(async () => {
 
 describe("Test Favorites And Cart", () => {
   test("test add product to favorites", async () => {
-    const newFavorite = { email: user.email, mkt: "new" };
     let res = await request(app).post("/user/addFavorite").send(newFavorite);
 
     expect(res.status).toEqual(200);
@@ -76,6 +77,37 @@ describe("Test Favorites And Cart", () => {
   test("test not send all params in get all favorites", async () => {
     let res = await request(app).get("/user/favorites");
 
+    expect(res.status).toEqual(400);
+  });
+
+  test("test remove product from favorites", async () => {
+    const res = await request(app)
+      .post("/user/removeFromFavorite")
+      .send(newFavorite);
+
+    expect(res.status).toEqual(200);
+    expect(res.text).toEqual("Remove product from favorite");
+  });
+
+  test("test not have this product in favorite", async () => {
+    const res = await request(app)
+      .post("/user/removeFromFavorite")
+      .send(newFavorite);
+
+    expect(res.status).toEqual(400);
+    expect(res.text).toEqual("Not find product");
+  });
+
+  test("test not send all params in remove favorites", async () => {
+    let res = await request(app)
+      .post("/user/removeFromFavorite")
+      .send({ email: user.email });
+
+    expect(res.status).toEqual(400);
+
+    res = await request(app)
+      .post("/user/removeFromFavorite")
+      .send({ mkt: "new" });
     expect(res.status).toEqual(400);
   });
 });
