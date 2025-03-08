@@ -12,10 +12,10 @@ export const setupProductsRoutes = (): Router => {
   const router = Router();
 
   router.get("/categories", validateRequestMiddleware(GetProductsByCategoriesQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {
-    const { categories, limit, offset } = req.query as unknown as GetProductsByCategoriesQueryDto;
+    const { categories, limit, offset, isInStock } = req.query as unknown as GetProductsByCategoriesQueryDto;
     
     try {
-      const productsByCategory = await productService.getProductsByCategories(categories, offset, limit);
+      const productsByCategory = await productService.getProductsByCategories(categories, offset, limit, isInStock);
     
       res.json(successResponse(productsByCategory));
     } catch (error: any) {
@@ -24,10 +24,10 @@ export const setupProductsRoutes = (): Router => {
   });
   
   router.get("/", validateRequestMiddleware(GetProductsQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {
-    const { limit, offset } = req.query as GetProductsQueryDto;
+    const { limit, offset, isInStock } = req.query as GetProductsQueryDto;
     
     try {
-      const products = await productService.getProducts(false, limit, offset);
+      const products = await productService.getProducts(false, limit, offset, isInStock);
     
       res.json(successResponse(products));
     } catch (error: any) {
