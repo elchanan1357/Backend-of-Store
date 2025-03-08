@@ -7,10 +7,10 @@ import { errorResponse } from "../utils/responseHelper";
 import { AuthRequest } from "../types/request";
 import { JwtPayload } from "../types/jwt";
 
-const { sessionSecret, authTokenKey } = config;
+const { sessionSecret, tokenKey, expiresInMs } = config?.authToken;
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies[authTokenKey];
+  const token = req.cookies[tokenKey];
   if (!token) {
     return res.status(401).json(errorResponse("Unauthorized", 401));
   }
@@ -25,11 +25,15 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
       id: decoded?.id,
     };
 
-    const newToken = jwt.sign(user , sessionSecret, { expiresIn: '1d' });
+    const jwtExpiresIn = Number(expiresInMs) / 1000;
+    const cookieExpiresDate = new Date(Date.now() + Number(expiresInMs));
 
-    res.cookie(authTokenKey, newToken, {
+    const newToken = jwt.sign(user , sessionSecret, { expiresIn: jwtExpiresIn });
+
+    res.cookie(tokenKey, newToken, {
       httpOnly: true,
       sameSite: 'strict',
+      expires: cookieExpiresDate,
     });
     
     req.user = user;
