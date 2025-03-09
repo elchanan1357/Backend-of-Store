@@ -15,7 +15,7 @@ const user: User = {
 };
 
 beforeAll(async () => {
-  // await UserModel.deleteMany({});
+  await UserModel.deleteOne({ email: user.email });
   console.log("start");
 });
 
@@ -25,10 +25,55 @@ afterAll(async () => {
   console.log("finish");
 });
 
+const invalidParams = async (registerUser) => {
+  let res = await request(app).post("/user/register").send(registerUser);
+  return res.statusCode;
+};
+
 describe("Test of authentication of user", () => {
   test("Not send all data in register", async () => {
     const tempUser = { ...user, phone: null };
     const res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+  });
+
+  test("user send params invalid", async () => {
+    let tempUser = {
+      name: "er44",
+      phone: "67",
+      email: "hello@gmail.com",
+      password: "g648",
+    };
+    let res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+
+    tempUser.name = "Hello@";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.name = "Hello";
+
+    tempUser.email = "user@com";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.email = "user@example..com";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.email = "@gmail.com";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.email = "1234";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.email = "hello@gmail.com";
+
+    tempUser.phone = "052-1234567";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.phone = "phone123";
+    res = await request(app).post("/user/register").send(tempUser);
+    expect(res.status).toEqual(400);
+    tempUser.phone = " 0521234";
+    res = await request(app).post("/user/register").send(tempUser);
     expect(res.status).toEqual(400);
   });
 

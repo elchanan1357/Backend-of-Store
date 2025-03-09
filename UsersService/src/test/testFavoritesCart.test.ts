@@ -66,9 +66,12 @@ describe("Test Favorites", () => {
   });
 
   test("test user not found in DB", async () => {
-    expect(notFoundUser("/user/addFavorite")).not.toEqual(200);
-    expect(notFoundUser("/user/favorites")).not.toEqual(200);
-    expect(notFoundUser("/user/removeFromFavorite")).not.toEqual(200);
+    let status = await notFoundUser("/user/addFavorite");
+    expect(status).toEqual(400);
+    status = await notFoundUser("/user/favorites");
+    expect(status).not.toEqual(200);
+    status = await notFoundUser("/user/removeFromFavorite");
+    expect(status).not.toEqual(200);
   });
 
   test("test get all favorites", async () => {
@@ -152,9 +155,12 @@ describe("Test Cart", () => {
   });
 
   test("test user not found in DB", async () => {
-    expect(notFoundUser("/user/addToCart")).not.toEqual(200);
-    expect(notFoundUser("/user/cart")).not.toEqual(200);
-    expect(notFoundUser("/user/removeFromCart")).not.toEqual(200);
+    let status = await notFoundUser("/user/addToCart");
+    expect(status).toEqual(400);
+    status = await notFoundUser("/user/cart");
+    expect(status).not.toEqual(200);
+    status = await notFoundUser("/user/removeFromCart");
+    expect(status).not.toEqual(200);
   });
 
   test("test get all cart", async () => {
