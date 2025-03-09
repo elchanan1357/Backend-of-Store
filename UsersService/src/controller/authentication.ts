@@ -15,6 +15,11 @@ const register = async (req: Request, res: Response) => {
   }
 
   let user: User = { name, email, phone, password, role: Role.User };
+  if (!checkInput(user)) {
+    console.log("fail: data in correct");
+    res.status(400).send("please provide me data correct");
+    return;
+  }
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -38,6 +43,11 @@ const login = async (req: Request, res: Response) => {
 
   if (email == null || password == null) {
     res.status(400).send({ error: "please provide email and password" });
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    res.status(400).send("email is not correct");
     return;
   }
 
@@ -91,5 +101,45 @@ const logout = async (req: Request, res: Response) => {
   res.clearCookie(config.auth_token_key, { path: "/" });
   res.status(200).send("Token cookie removed");
 };
+
+function checkInput(user: User) {
+  const fullName = user.name;
+  const email = user.email;
+  const phone = user.phone;
+
+  if (!isValidString(fullName)) return false;
+  if (!isValidEmail(email)) return false;
+  if (!isValidPhone(phone)) return false;
+
+  return true;
+}
+
+/**
+ * checking if the name is correct
+ * @param {string} name
+ * @returns  {boolean}
+ */
+function isValidString(name) {
+  return /^[a-zA-Z\u0590-\u05FF\s]+$/.test(name); //just letters
+}
+
+/**
+ * checking if the email is correct
+ * @param {string} email
+ * @returns  {boolean}
+ */
+function isValidEmail(email) {
+  // return  /^[a-zA-Z0-9]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+}
+
+/**
+ * checking if the num is number or not
+ * @param {number} num
+ * @returns {boolean}
+ */
+function isValidPhone(num) {
+  return /^\d+$/.test(num);
+}
 
 export = { login, register, logout };

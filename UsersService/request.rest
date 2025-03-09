@@ -53,3 +53,22 @@ Content-Type: application/json
 {
    "email": "eli2@gmail.com"
 }
+
+
+###
+POST  http://localhost:3000/user/addToCart
+Content-Type: application/json 
+
+{
+    "email": "eli2@gmail.com",
+    "mkt":"new6"
+}
+
+###
+POST  http://localhost:3000/user/removeFromCart
+Content-Type: application/json 
+
+{
+    "email": "eli2@gmail.com",
+    "mkt":"new6"
+}

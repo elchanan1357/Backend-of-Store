@@ -67,7 +67,6 @@ const addToFavorites = async (req: Request, res: Response) => {
 };
 
 const removeFavorite = async (req: Request, res: Response) => {
-  console.log("play")
   const { email, mkt } = req.body;
   if (!valueIsNull(res, email) || !valueIsNull(res, mkt)) return;
 
@@ -76,7 +75,7 @@ const removeFavorite = async (req: Request, res: Response) => {
     if (!user) return;
 
     if (user.favorites.includes(mkt)) {
-      user.favorites = user.favorites.filter((item)=>item != mkt)
+      user.favorites = user.favorites.filter((item) => item != mkt);
       user.save();
       console.log("Remove product from favorite");
       res.status(200).send(`Remove product from favorite`);
@@ -100,19 +99,58 @@ const getAllCart = async (req: Request, res: Response) => {
     if (!user) return;
 
     res.status(200).send({ cart: user.cart });
-  }  catch (err) {
+  } catch (err) {
     console.log("Fail in get all cart");
   }
 };
 
 const addToCart = async (req: Request, res: Response) => {
+  const { email, mkt } = req.body;
+  if (!valueIsNull(res, email) || !valueIsNull(res, mkt)) return;
+
   try {
+    const user = await findUser(res, email);
+    if (!user) return;
+
+    if (!user.cart.includes(mkt)) {
+      user.cart.push(mkt);
+      user.save();
+      console.log("Product added to cart");
+      res.status(200).send(`Product added to cart`);
+      return;
+    } else {
+      console.log("Product already in cart");
+      res.status(200).send("Product already in cart");
+      return;
+    }
   } catch (err) {
     console.log("Fail in add product to cart");
   }
 };
 
-const removeFromCart = async (req: Request, res: Response) => {};
+const removeFromCart = async (req: Request, res: Response) => {
+  const { email, mkt } = req.body;
+  if (!valueIsNull(res, email) || !valueIsNull(res, mkt)) return;
+
+  try {
+    const user = await findUser(res, email);
+    if (!user) return;
+
+    if (user.cart.includes(mkt)) {
+      user.cart = user.cart.filter((item) => item != mkt);
+      user.save();
+      console.log("Remove product from cart");
+      res.status(200).send(`Remove product from cart`);
+      return;
+    } else {
+      console.log("Not find product");
+      res.status(400).send("Not find product");
+      return;
+    }
+  } catch (err) {
+    console.log("Fail in remove product from cart");
+  }
+};
 
 export = {
   getAllFavorites,
