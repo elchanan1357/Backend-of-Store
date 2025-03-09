@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsOptional, Min, IsArray, IsEnum, ArrayNotEmpty, IsInt, IsPositive, IsDefined } from "class-validator";
+import { IsOptional, Min, IsArray, IsEnum, ArrayNotEmpty, IsInt, IsPositive, IsDefined, IsBoolean } from "class-validator";
 import { Product, ProductCategory } from "../types/product";
 
 export class GetProductsByCategoriesQueryDto {
@@ -21,6 +21,11 @@ export class GetProductsByCategoriesQueryDto {
     @IsInt()
     @Min(0)
     offset?: number;
+    
+    @Transform(({ value }) => value === 'true')
+    @IsOptional()
+    @IsBoolean()
+    isInStock?: boolean;
 }
 
 export type GetProductsByCategoryResponseDto = {

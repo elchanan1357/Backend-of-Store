@@ -5,11 +5,14 @@ import { Product } from '../types/product';
 export interface IProduct extends Product, Document<Schema.Types.ObjectId> {}
 
 const ProductSchema: Schema = new Schema({
-  name: { type: String, required: true, unique: true },
-  description: { type: String },
-  img: { type: String },
-  price: { type: Number, required: true, min: 0 },
   mkt: { type: String, required: true, unique: true },
+  img: { type: String },
+  logo: {type: String},
+  name: { type: String, required: true },
+  company: {type: String},
+  color: {type: String},
+  description: { type: String },
+  price: { type: String, required: true },
   category: { type: String, enum: Object.values(ProductCategory), required: true },
   stock: { type: Number, required: true, min: 0 },
 });

@@ -7,10 +7,13 @@ import { UpdateDetail } from '../dtos/updateProductsStock';
 import { ProductsNotExistError, ProductsNotInStockError } from '../utils/errors';
 
 class ProductService {
-  async getProductsByCategories(categories: ProductCategory[], offset: number = 0, limit?: number) {
+  async getProductsByCategories(categories: ProductCategory[], offset: number = 0, limit?: number, isInStock?: boolean) {
     const productsByCategory = await ProductModel.aggregate<{ category: ProductCategory, products: Product[]}>([
         {
-          $match: { category: { $in: categories } }
+          $match: { 
+            category: { $in: categories },
+            ...(isInStock ? { stock: { $gt: 0 } } : {})
+          },
         },
         {
           $group: {
@@ -21,7 +24,10 @@ class ProductService {
                 price: "$price",
                 description: "$description",
                 img: "$img",
-                mkt: "$mkt"
+                mkt: "$mkt",
+                logo: "$logo",
+                company: "$company",
+                color: "$color",
               }
             }
           }
@@ -52,7 +58,10 @@ class ProductService {
         name: 1,
         description: 1,
         mkt: 1,
-        _id: 1
+        _id: 1,
+        logo: 1,
+        company: 1,
+        color: 1,
     };
 
     if (isAdmin) {
@@ -62,21 +71,24 @@ class ProductService {
     return select;
   }
 
-  async getProducts(isAdmin: boolean, limit?: number, offset?: number) {
-      const select = this.getProductsSelect(isAdmin);
+  async getProducts(isAdmin: boolean, limit?: number, offset?: number, isInStock?: boolean) {
+    const select = this.getProductsSelect(isAdmin);
 
-      let query = ProductModel.find().select(select);
+    let query = ProductModel.find().select(select);
 
-      if (offset) {
-          query = query.skip(offset);
-      }
+    if (isInStock) {
+      query = query.where("stock").gt(0)
+    }
 
-      if (limit) {
-          query = query.limit(limit);
-      }
+    if (offset) {
+      query = query.skip(offset);
+    }
 
-      const products = await query;
-      return products;
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    return await query;;
   }
    
   async getProductStocksByMkt(mktValues: string[]) {
