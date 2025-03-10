@@ -39,14 +39,14 @@ const register = async (req: Request, res: Response) => {
   let user: User = { name, email, phone, password, role: Role.User };
   if (!checkInput(user)) {
     console.log("The data is not correct");
-    res.status(400).send({ success: false, info: "The data is not correct" });
+    res.status(400).send({ success: false, error: "The data is not correct" });
     return;
   }
 
   try {
     if (await userModel.findOne({ email: user.email })) {
       console.log("user already exist");
-      res.status(400).send({ success: false, info: "user already exists" });
+      res.status(400).send({ success: false, error: "user already exists" });
       return;
     }
 
@@ -60,9 +60,9 @@ const register = async (req: Request, res: Response) => {
     newUser = await newUser.save();
 
     console.log("the user register in success");
-    res.status(200).send({ success: true, user: newUser });
+    res.status(200).send({ success: true, info: newUser });
   } catch (err) {
-    res.status(400).send({ success: false, error: "Fail in register" });
+    res.status(500).send({ success: false, error: "Fail in register" });
   }
 };
 
@@ -115,10 +115,10 @@ const login = async (req: Request, res: Response) => {
         expires: new Date(Date.now() + 60 * 60 * 1000),
       })
       .status(200)
-      .send({ success: true, user: resUser });
+      .send({ success: true, info: resUser });
   } catch (err) {
     console.log(err);
-    res.status(400).send({ success: false, error: "Fail in login" });
+    res.status(500).send({ success: false, error: "Fail in login" });
   }
 };
 
