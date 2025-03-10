@@ -4,6 +4,9 @@ const server = express();
 import cors from "cors";
 server.use(cors());
 
+import cookieParser from "cookie-parser";
+server.use(cookieParser());
+
 import bodyParser from "body-parser";
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());

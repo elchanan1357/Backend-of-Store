@@ -1,5 +1,5 @@
 ###
-POST  http://localhost:3000/user/register
+POST  http://localhost:8081/user/register
 Content-Type: application/json 
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ###
-POST  http://localhost:3000/user/login
+POST  http://localhost:8081/user/login
 Content-Type: application/json 
 
 {
@@ -21,24 +21,32 @@ Content-Type: application/json
 }
 
 ###
-POST  http://localhost:3000/user/addFavorite
+POST  http://localhost:8081/user/addFavorite
 Content-Type: application/json 
 
 {
     "email": "Haim@gmail.com",
-    "mkt":"new3"
+    "mkt":"30027"
 }
 
 ###
-GET  http://localhost:3000/user/favorites
-Content-Type: application/json 
+GET http://localhost:8081/user/favorites
+Content-Type: application/json
+Cookie: auth-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2FjMWRlYTFlY2JhYTg2M2Y4ZWFjMyIsInBob25lIjo1OTYzNzUsImVtYWlsIjoiSGFpbUBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTYwODg3NiwiZXhwIjoxNzQxNjEyNDc2fQ.WVTRVUY7VHM7s8jQsnNxBHIkKvPPcgj-PNmiX9DXD-M;
 
 {
    "email": "Haim@gmail.com"
 }
 
+# GET  http://localhost:8081/user/favorites
+# Content-Type: application/json 
+
+# {
+#    "email": "Haim@gmail.com"
+# }
+
 ###
-POST  http://localhost:3000/user/removeFromFavorite
+POST  http://localhost:8081/user/removeFromFavorite
 Content-Type: application/json 
 
 {
@@ -47,7 +55,7 @@ Content-Type: application/json
 }
 
 ###
-GET  http://localhost:3000/user/cart
+GET  http://localhost:8081/user/cart
 Content-Type: application/json 
 
 {
@@ -56,7 +64,7 @@ Content-Type: application/json
 
 
 ###
-POST  http://localhost:3000/user/addToCart
+POST  http://localhost:8081/user/addToCart
 Content-Type: application/json 
 
 {
@@ -65,7 +73,7 @@ Content-Type: application/json
 }
 
 ###
-POST  http://localhost:3000/user/removeFromCart
+POST  http://localhost:8081/user/removeFromCart
 Content-Type: application/json 
 
 {
