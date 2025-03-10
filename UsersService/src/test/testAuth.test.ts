@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import app from "../server";
 import UserModel from "../models/userModel";
 import { User, Role } from "../types/user";
-import bcrypt from "bcrypt";
 import { config } from "../utils/config";
 
 const user: User = {
@@ -14,13 +13,14 @@ const user: User = {
   role: Role.User,
 };
 
+let cookie: string = "";
+
 beforeAll(async () => {
   await UserModel.deleteOne({ email: user.email });
   console.log("start");
 });
 
 afterAll(async () => {
-  // await UserModel.deleteMany({});
   mongoose.connection.close();
   console.log("finish");
 });
@@ -81,12 +81,9 @@ describe("Test of authentication of user", () => {
     const res = await request(app).post("/user/register").send(user);
 
     expect(res.status).toEqual(200);
-    expect(res.body.name).toEqual(user.name);
-    expect(res.body.phone).toEqual(user.phone);
-    expect(res.body.email).toEqual(user.email);
-
-    const isMatch = await bcrypt.compare(user.password, res.body.password);
-    expect(isMatch).toBe(true);
+    expect(res.body.info.name).toEqual(user.name);
+    expect(res.body.info.phone).toEqual(user.phone);
+    expect(res.body.info.email).toEqual(user.email);
   });
 
   test("login with wrong password", async () => {
@@ -103,10 +100,10 @@ describe("Test of authentication of user", () => {
     const res = await request(app).post("/user/login").send(user);
     expect(res.status).toEqual(200);
 
-    const cookieToken = res.headers["set-cookie"][0];
-    expect(cookieToken.split("=")[0]).toEqual(config.auth_token_key);
+    cookie = res.headers["set-cookie"][0];
+    expect(cookie.split("=")[0]).toEqual(config.auth_token_key);
 
-    const cookieHeader = res.headers["set-cookie"][0].split("; ");
+    const cookieHeader = cookie.split("; ");
     const expireVal = cookieHeader.find((item: string) =>
       item.startsWith("Expires=")
     );
@@ -120,7 +117,7 @@ describe("Test of authentication of user", () => {
     const tempUser = { ...user };
     delete tempUser.password;
     delete resUser.id;
-    expect(resUser).toEqual(tempUser);
+    expect(resUser.info).toEqual(tempUser);
   });
 
   test("Not send email or password in login", async () => {
@@ -131,8 +128,13 @@ describe("Test of authentication of user", () => {
     expect(res.headers["set-cookie"]).toBeUndefined();
   });
 
-  test("check logout", async () => {
-    const res = await request(app).get("/user/logout");
+  test("test user logout", async () => {
+    const res = await request(app)
+      .get("/user/logout")
+      .set("Cookie", `${cookie}`);
+
+    expect(res.status).toEqual(200);
+
     const cookieToken = res.headers["set-cookie"][0];
     expect(cookieToken.split("=")[0]).toEqual(config.auth_token_key);
 
@@ -145,5 +147,12 @@ describe("Test of authentication of user", () => {
     const expireTime = new Date(expireVal.split("=")[1]);
     const now = new Date();
     expect(expireTime.getTime()).not.toBeGreaterThan(now.getTime());
+  });
+
+  test("test user not send token", async () => {
+    const res = await request(app).get("/user/logout");
+
+    expect(res.status).toEqual(400);
+    expect(res.body.success).toBe(false);
   });
 });

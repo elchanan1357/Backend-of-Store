@@ -62,7 +62,15 @@ const register = async (req: Request, res: Response) => {
     newUser = await newUser.save();
 
     console.log("the user register in success");
-    res.status(200).send({ success: true, info: newUser });
+    res.status(200).send({
+      success: true,
+      info: {
+        name: newUser.name,
+        phone: newUser.phone,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (err) {
     res.status(500).send({ success: false, error: "Fail in register" });
   }
@@ -105,7 +113,6 @@ const login = async (req: Request, res: Response) => {
     );
 
     const resUser = {
-      id: findUser._id.toString(),
       name: findUser.name,
       phone: findUser.phone,
       email: findUser.email,
@@ -129,11 +136,11 @@ const login = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
   res.clearCookie(config.auth_token_key, { path: "/" });
 
-  if (req.cookies?.[config.auth_token_key]) {
-    res
-      .status(500)
-      .send({ success: false, error: "Failed to remove token cookie" });
-  }
+  // if (req.cookies?.[config.auth_token_key]) {
+  //   res
+  //     .status(500)
+  //     .send({ success: false, error: "Failed to remove token cookie" });
+  // }
 
   res.status(200).send({ success: true, info: "Token cookie removed" });
 };

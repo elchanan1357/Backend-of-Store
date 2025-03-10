@@ -12,7 +12,7 @@ const middlewareInHeaders = async (
     res.status(400).send({ error: "authentication missing" });
   const accessToken = authHeaders.split(" ")[1];
   if (accessToken == null)
-    res.status(400).send({ error: "authentication missing" });
+    res.status(400).send({ success: false, error: "authentication missing" });
 
   try {
     const user = jwt.verify(accessToken, config.access_token) as {
@@ -23,7 +23,7 @@ const middlewareInHeaders = async (
     req.body.userID = user._id;
     next();
   } catch (err) {
-    res.status(400).send({ error: "fail validating token" });
+    res.status(400).send({ success: false, error: "fail validating token" });
   }
 };
 
@@ -34,7 +34,7 @@ const middlewareInCookie = async (
 ) => {
   const accessToken = req.cookies?.[config.auth_token_key];
   if (!accessToken) {
-    res.status(400).send({ error: "authentication missing" });
+    res.status(400).send({ success: false, error: "authentication missing" });
     return;
   }
 
@@ -46,7 +46,7 @@ const middlewareInCookie = async (
     req.body.userID = user.id;
     next();
   } catch (err) {
-    res.status(400).send({ error: "fail validating token" });
+    res.status(400).send({ success: false, error: "fail validating token" });
   }
 };
 
