@@ -121,8 +121,9 @@ const login = async (req: Request, res: Response) => {
 
     res
       .cookie(config.auth_token_key, accessToken, {
-        sameSite: "strict",
+        sameSite: "lax",
         httpOnly: true,
+        secure:false,
         expires: new Date(Date.now() + 60 * 60 * 1000),
       })
       .status(200)

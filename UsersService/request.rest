@@ -2,19 +2,14 @@
 POST  http://localhost:8081/user/register
 Content-Type: application/json 
 
-{
-    "name": "ys",
-    "phone":  82522,
-    "email": "ys@gmail.com",
-    "password":  "1"
-}
-
 # {
-#     "name": "Haim",
-#     "phone":  596375,
-#     "email": "Haim@gmail.com",
-#     "password":  "Haim135624"
+#     "name": "ys",
+#     "phone":  82522,
+#     "email": "ys@gmail.com",
+#     "password":  "1"
 # }
+
+
 
 ###
 POST  http://localhost:8081/user/login

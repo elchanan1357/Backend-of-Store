@@ -2,7 +2,13 @@ import express from "express";
 const server = express();
 
 import cors from "cors";
-server.use(cors());
+// server.use(cors());
+server.use(
+  cors({
+    origin: "http://localhost:5500",
+    credentials: true,
+  })
+);
 
 import cookieParser from "cookie-parser";
 server.use(cookieParser());

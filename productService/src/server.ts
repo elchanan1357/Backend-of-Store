@@ -19,23 +19,33 @@ export const createHttpServer = () => {
 
   app.use(cookieParser());
   app.use(express.json());
-  app.use(cors({ 
-      origin: config.corsOrigin 
+  app.use(
+    cors({
+      origin: config.corsOrigin,
     })
   );
+
   app.use(morgan(config.middelwareloggerFormat));
   app.use(express.urlencoded({ extended: true }));
-  
+
   app.use("/products", setupProductsRoutes());
-  app.use("/admin/products", authMiddleware, rolesMiddleware([Role.Admin]), setupAdminProductsRoutes());
-  app.use("/internal/products", validateInternalTokenMiddleware, setupInternalProductsRoutes())
-  
+  app.use(
+    "/admin/products",
+    authMiddleware,
+    rolesMiddleware([Role.Admin]),
+    setupAdminProductsRoutes()
+  );
+  app.use(
+    "/internal/products",
+    validateInternalTokenMiddleware,
+    setupInternalProductsRoutes()
+  );
+
   // must be after all routes for catch all unmatched routes
   app.use(notFoundMiddleware);
-  
+
   // must be after all routes for catch errors
   app.use(errorHandlerMiddleware);
-  
 
   return app;
-}
+};
