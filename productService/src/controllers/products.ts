@@ -56,10 +56,10 @@ export const setupProductsRoutes = (): Router => {
       try {
         const products = await productService.getProductsByMkts(mkts);
         return res.json(successResponse(products));
-      } catch (error: any) {
+      } catch (error: unknown) {
         return res
           .status(500)
-          .json(errorResponse(error?.message || "Internal Server Error", 500));
+          .json(errorResponse((error as Error)?.message || "Internal Server Error", 500));
       }
     }
   );
