@@ -5,6 +5,7 @@ import { ProductModel, ProductSelect } from '../models/product.model';
 import { ProductCategory, Product } from '../types/product';
 import { UpdateDetail } from '../dtos/updateProductsStock';
 import { ProductsNotExistError, ProductsNotInStockError } from '../utils/errors';
+import { ProdectsByMktsResponseDto } from '../dtos/getProdectsByMkts';
 
 class ProductService {
   async getProductsByCategories(categories: ProductCategory[], offset: number = 0, limit?: number, isInStock?: boolean) {
@@ -154,6 +155,18 @@ class ProductService {
     if (notInStockMkts.length) {
       throw new ProductsNotInStockError(notInStockMkts);
     }
+  }
+
+  async getProductsByMkts(mkts: string[]): Promise<ProdectsByMktsResponseDto> {
+    const products = await ProductModel.find({ mkt: { $in: mkts } })
+      .select("-_id -stock")
+      .lean();
+
+    return products.reduce((acc: ProdectsByMktsResponseDto, product) => {
+      const { mkt, ...rest } = product;
+      acc[mkt] = rest;
+      return acc;
+    }, {} as ProdectsByMktsResponseDto);
   }
 }
 
