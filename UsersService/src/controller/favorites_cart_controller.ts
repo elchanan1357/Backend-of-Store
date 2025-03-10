@@ -26,7 +26,7 @@ const findUser = async (res: Response, id: string) => {
 const valueIsNull = (res: Response, value: string): boolean => {
   if (!value) {
     console.log("Please provide me data");
-    sendError(res,400, "Please provide me email and mkt")
+    sendError(res,400, "Please provide me id and mkt")
     return false;
   }
   return true;

@@ -32,7 +32,9 @@ const register = async (req: Request, res: Response) => {
 
   if (name == null || phone == null || email == null || password == null) {
     console.log("Please provide me all data");
-    res.status(400).send({success: false, error: "please provide all values" });
+    res
+      .status(400)
+      .send({ success: false, error: "please provide all values" });
     return;
   }
 
@@ -70,7 +72,9 @@ const login = async (req: Request, res: Response) => {
   const { email, password } = req?.body || {};
 
   if (email == null || password == null) {
-    res.status(400).send({success: false, error: "please provide email and password" });
+    res
+      .status(400)
+      .send({ success: false, error: "please provide email and password" });
     return;
   }
 
@@ -126,7 +130,7 @@ const logout = async (req: Request, res: Response) => {
   res.clearCookie(config.auth_token_key, { path: "/" });
 
   if (req.cookies?.[config.auth_token_key]) {
-    return res
+    res
       .status(500)
       .send({ success: false, error: "Failed to remove token cookie" });
   }

@@ -5,7 +5,7 @@ import UserModel from "../models/userModel";
 import { User, Role } from "../types/user";
 import userModel from "../models/userModel";
 
-const user: User = {
+const eli: User = {
   name: "eli",
   phone: 55244484,
   email: "eli2@gmail.com",
@@ -13,7 +13,18 @@ const user: User = {
   role: Role.User,
 };
 
-const newFavorite = { email: user.email, mkt: "new" };
+const mendy: User = {
+  name: "Mendy",
+  phone: 55244484,
+  email: "mendy@gmail.com",
+  password: "mendy968",
+  role: Role.User,
+};
+
+const newFavorite = { email: eli.email, mkt: "new" };
+
+let cookieEli = "";
+let cookieMendy = "";
 
 const removeFavoritesFromDB = async (email: string) => {
   let userDB = await UserModel.findOne({ email });
@@ -21,198 +32,203 @@ const removeFavoritesFromDB = async (email: string) => {
   userDB.save();
 };
 
+const notSendToken = async (router: string) => {
+  const newVal = { email: "ew@gmail.com", mkt: "46" };
+  let res = await request(app).post(router).send(newVal);
+  return res.status;
+};
+
 beforeAll(async () => {
-  await removeFavoritesFromDB(user.email);
-  await removeFavoritesFromDB("mendy@gmail.com");
-  await userModel.deleteOne({ email: "ew@gmail.com" });
+  await removeFavoritesFromDB(eli.email);
+  await removeFavoritesFromDB(mendy.email);
+
+  const resEli = await request(app).post("/user/login").send(eli);
+  cookieEli = resEli.headers["set-cookie"];
+
+  const resMendy = await request(app).post("/user/login").send(mendy);
+  cookieMendy = resMendy.headers["set-cookie"];
 
   console.log("start");
 });
 
 afterAll(async () => {
   mongoose.connection.close();
+
+  await request(app).post("/user/logout").send(eli);
+  await request(app).post("/user/logout").send(mendy);
+
   console.log("finish");
 });
 
-const notFoundUser = async (router: string) => {
-  const newVal = { email: "ew@gmail.com", mkt: "46" };
-  let res = await request(app).post(router).send(newVal);
-
-  return res.status;
-};
-
 describe("Test Favorites", () => {
   test("test add product to favorites", async () => {
-    let res = await request(app).post("/user/addFavorite").send(newFavorite);
+    const res = await request(app)
+      .post("/user/addFavorite")
+      .set("Cookie", `${cookieEli}`)
+      .send(newFavorite);
 
     expect(res.status).toEqual(200);
-    expect(res.text).toEqual("Product added to favorites");
+    expect(res.body.success).toEqual(true);
+  });
 
-    res = await request(app).post("/user/addFavorite").send(newFavorite);
+  test("test try to add product but is already exist", async () => {
+    const res = await request(app)
+      .post("/user/addFavorite")
+      .set("Cookie", `${cookieEli}`)
+      .send(newFavorite);
 
-    expect(res.status).toEqual(200);
-    expect(res.text).toEqual("Product already in favorites");
+    expect(res.status).toEqual(400);
+    expect(res.body.success).toEqual(false);
   });
 
   test("test not send all params in add favorites", async () => {
-    let res = await request(app)
+    const res = await request(app)
       .post("/user/addFavorite")
-      .send({ email: user.email });
+      .set("Cookie", `${cookieEli}`);
 
     expect(res.status).toEqual(400);
-
-    res = await request(app).post("/user/addFavorite").send({ mkt: "new" });
-    expect(res.status).toEqual(400);
+    expect(res.body.success).toEqual(false);
   });
 
-  test("test user not found in DB", async () => {
-    let status = await notFoundUser("/user/addFavorite");
+  test("test user not send token", async () => {
+    let status = await notSendToken("/user/addFavorite");
     expect(status).toEqual(400);
-    status = await notFoundUser("/user/favorites");
+    status = await notSendToken("/user/favorites");
     expect(status).not.toEqual(200);
-    status = await notFoundUser("/user/removeFromFavorite");
+    status = await notSendToken("/user/removeFromFavorite");
     expect(status).not.toEqual(200);
   });
 
   test("test get all favorites", async () => {
     const res = await request(app)
       .get("/user/favorites")
-      .send({ email: user.email });
+      .set("Cookie", `${cookieEli}`);
 
     expect(res.status).toEqual(200);
-    expect(res.body.favorites.length).not.toEqual(0);
+    expect(res.body.info.length).not.toEqual(0);
   });
 
   test("test in get all favorites but is not favorites", async () => {
     const res = await request(app)
       .get("/user/favorites")
-      .send({ email: "mendy@gmail.com" });
+      .set("Cookie", `${cookieMendy}`);
 
     expect(res.status).toEqual(200);
-    expect(res.body.favorites.length).toEqual(0);
-  });
-
-  test("test not send all params in get all favorites", async () => {
-    let res = await request(app).get("/user/favorites");
-
-    expect(res.status).toEqual(400);
+    expect(res.body.info.length).toEqual(0);
   });
 
   test("test remove product from favorites", async () => {
     const res = await request(app)
       .post("/user/removeFromFavorite")
+      .set("Cookie", `${cookieEli}`)
       .send(newFavorite);
 
     expect(res.status).toEqual(200);
-    expect(res.text).toEqual("Remove product from favorite");
+    expect(res.body.success).toEqual(true);
   });
 
   test("test not have this product in favorite", async () => {
     const res = await request(app)
       .post("/user/removeFromFavorite")
+      .set("Cookie", `${cookieMendy}`)
       .send(newFavorite);
 
     expect(res.status).toEqual(400);
-    expect(res.text).toEqual("Not find product");
+    expect(res.body.success).toEqual(false);
   });
 
   test("test not send all params in remove favorites", async () => {
-    let res = await request(app)
+    const res = await request(app)
       .post("/user/removeFromFavorite")
-      .send({ email: user.email });
-
-    expect(res.status).toEqual(400);
-
-    res = await request(app)
-      .post("/user/removeFromFavorite")
+      .set("Cookie", `${cookieEli}`)
       .send({ mkt: "new" });
     expect(res.status).toEqual(400);
+    expect(res.body.success).toEqual(false);
   });
 });
 
 describe("Test Cart", () => {
   test("test add product to Cart", async () => {
-    let res = await request(app).post("/user/addToCart").send(newFavorite);
+    const res = await request(app)
+      .post("/user/addToCart")
+      .set("Cookie", `${cookieEli}`)
+      .send(newFavorite);
 
     expect(res.status).toEqual(200);
-    expect(res.text).toEqual("Product added to cart");
+    expect(res.body.success).toEqual(true);
+  });
 
-    res = await request(app).post("/user/addToCart").send(newFavorite);
+  test("test the product already exist", async () => {
+    const res = await request(app)
+      .post("/user/addToCart")
+      .set("Cookie", `${cookieEli}`)
+      .send(newFavorite);
 
-    expect(res.status).toEqual(200);
-    expect(res.text).toEqual("Product already in cart");
+    expect(res.status).toEqual(400);
+    expect(res.body.success).toEqual(false);
   });
 
   test("test not send all params in add cart", async () => {
     let res = await request(app)
       .post("/user/addToCart")
-      .send({ email: user.email });
+      .set("Cookie", `${cookieEli}`);
 
     expect(res.status).toEqual(400);
-
-    res = await request(app).post("/user/addToCart").send({ mkt: "new" });
-    expect(res.status).toEqual(400);
+    expect(res.body.success).toEqual(false);
   });
 
-  test("test user not found in DB", async () => {
-    let status = await notFoundUser("/user/addToCart");
+  test("test user not send token", async () => {
+    let status = await notSendToken("/user/addToCart");
     expect(status).toEqual(400);
-    status = await notFoundUser("/user/cart");
+    status = await notSendToken("/user/cart");
     expect(status).not.toEqual(200);
-    status = await notFoundUser("/user/removeFromCart");
+    status = await notSendToken("/user/removeFromCart");
     expect(status).not.toEqual(200);
   });
 
   test("test get all cart", async () => {
     const res = await request(app)
       .get("/user/cart")
-      .send({ email: user.email });
+      .set("Cookie", `${cookieEli}`);
 
     expect(res.status).toEqual(200);
-    expect(res.body.cart.length).not.toEqual(0);
-  });
-
-  test("test not send all params in get all cart", async () => {
-    let res = await request(app).get("/user/cart");
-
-    expect(res.status).toEqual(400);
-  });
-
-  test("test remove product from cart", async () => {
-    const res = await request(app)
-      .post("/user/removeFromCart")
-      .send(newFavorite);
-
-    expect(res.status).toEqual(200);
-    expect(res.text).toEqual("Remove product from cart");
+    expect(res.body.info.length).not.toEqual(0);
   });
 
   test("test in get all cart but is no product in cart", async () => {
     const res = await request(app)
       .get("/user/cart")
-      .send({ email: "mendy@gmail.com" });
+      .set("Cookie", `${cookieMendy}`);
 
     expect(res.status).toEqual(200);
-    expect(res.body.cart.length).toEqual(0);
+    expect(res.body.info.length).toEqual(0);
+  });
+
+  test("test remove product from cart", async () => {
+    const res = await request(app)
+      .post("/user/removeFromCart")
+      .set("Cookie", `${cookieEli}`)
+      .send(newFavorite);
+
+    expect(res.status).toEqual(200);
+    expect(res.body.success).toEqual(true);
   });
 
   test("test not have this product in cart", async () => {
     const res = await request(app)
       .post("/user/removeFromCart")
+      .set("Cookie", `${cookieEli}`)
       .send(newFavorite);
 
     expect(res.status).toEqual(400);
-    expect(res.text).toEqual("Not find product");
+    expect(res.body.success).toEqual(false);
   });
 
   test("test not send all params in remove cart", async () => {
-    let res = await request(app)
+    const res = await request(app)
       .post("/user/removeFromCart")
-      .send({ email: user.email });
-
+      .set("Cookie", `${cookieEli}`);
     expect(res.status).toEqual(400);
-
-    res = await request(app).post("/user/removeFromCart").send({ mkt: "new" });
-    expect(res.status).toEqual(400);
+    expect(res.body.success).toEqual(false);
   });
 });

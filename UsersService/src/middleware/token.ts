@@ -33,7 +33,6 @@ const middlewareInCookie = async (
   next: NextFunction
 ) => {
   const accessToken = req.cookies?.[config.auth_token_key];
-  console.log(accessToken)
   if (!accessToken) {
     res.status(400).send({ error: "authentication missing" });
     return;
@@ -41,10 +40,10 @@ const middlewareInCookie = async (
 
   try {
     const user = jwt.verify(accessToken, config.access_token) as {
-      _id: string;
+      id: string;
     };
 
-    req.body.userID = user._id;
+    req.body.userID = user.id;
     next();
   } catch (err) {
     res.status(400).send({ error: "fail validating token" });
