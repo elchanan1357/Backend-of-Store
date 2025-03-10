@@ -1,0 +1,8 @@
+packages:
+  - OrderService
+  - productService
+  - UsersService
+  - shared
+onlyBuiltDependencies:
+  - bcrypt
+  - node

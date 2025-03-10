@@ -3,7 +3,8 @@ import orderService from '../services/order.service';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CreateOrderDto } from '../dtos/create-order.dto';
-import logger from '../utils/logger';
+// import logger from '../utils/logger';
+import { logger } from 'shared';
 import {
   handleControllerError,
   sendValidationErrorResponse,

@@ -8,7 +8,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import orderRoutes from './routes/order.routes';
-import logger from './utils/logger';
+// import logger from './utils/logger';
+import { logger } from 'shared';
 
 // Ensure DB connection string exists
 const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL;

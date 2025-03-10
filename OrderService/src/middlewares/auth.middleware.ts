@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { UserPayload } from '../types/user';
-import logger from '../utils/logger';
+import { UserPayload, logger } from 'shared';
+// import logger from '../utils/logger';
 import { sendErrorResponse } from '../utils/response-handler';
 
 dotenv.config();
