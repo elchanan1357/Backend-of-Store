@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 // Connect to server and DB
 const startServer = async () => {
   try {
-    logger.info(`Connecting to MongoDB at ${DB_CONNECTION_URL}...`);
+    logger.info(`Connecting to MongoDB...`);
     await mongoose.connect(DB_CONNECTION_URL);
     logger.info('Connected to MongoDB database successfully');
 
