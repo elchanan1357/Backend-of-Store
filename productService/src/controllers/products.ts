@@ -6,6 +6,7 @@ import { ProductStocksQueryDto } from "../dtos/getProductsStock";
 import { GetProductsQueryDto } from "../dtos/getProductDto";
 import { validateRequestMiddleware } from "../middlewares/validateRequest";
 import { ParamsTypeEnum } from "../types/request";
+import { ProdectsByMktsQueryDto } from "../dtos/getProdectsByMkts";
 
 
 export const setupProductsRoutes = (): Router => {
@@ -45,6 +46,23 @@ export const setupProductsRoutes = (): Router => {
       return res.status(500).json(errorResponse(error?.message || "Internal Server Error", 500));
     }
   });
+
+  router.get(
+    "/mkts",
+    validateRequestMiddleware(ProductStocksQueryDto, ParamsTypeEnum.QUERY),
+    async (req, res) => {
+      const { mkts } = req.query as unknown as ProdectsByMktsQueryDto;
+  
+      try {
+        const products = await productService.getProductsByMkts(mkts);
+        return res.json(successResponse(products));
+      } catch (error: unknown) {
+        return res
+          .status(500)
+          .json(errorResponse((error as Error)?.message || "Internal Server Error", 500));
+      }
+    }
+  );
 
   return router;
 };
