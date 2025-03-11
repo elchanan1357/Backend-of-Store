@@ -130,20 +130,14 @@ const addToCart = async (req: Request, res: Response) => {
     if (!user) return;
 
     let cartUser = user.cart.find((p) => p.mkt == item.mkt);
-    if (!cartUser) {
-      user.cart.push(item);
-      await user.save();
-      console.log("Product added to cart");
-      res
-        .status(200)
-        .send({ success: true, info: `Product mkt: ${mkt} added to cart` });
-      return;
-    } else {
-      cartUser.amount = cartUser.amount + 1;
-      await user.save();
+    if (!cartUser) user.cart.push(item);
+    else cartUser.amount = cartUser.amount + 1;
 
-      return;
-    }
+    await user.save();
+    console.log("Product added to cart");
+    res
+      .status(200)
+      .send({ success: true, info: `Product mkt: ${mkt} added to cart` });
   } catch (err) {
     console.log("Fail in add product to cart");
     sendError(res, 500, `Fail in add product to cart`);
@@ -160,16 +154,15 @@ const removeFromCart = async (req: Request, res: Response) => {
     if (!user) return;
 
     let product = user.cart.find((p) => p.mkt == mkt);
-    if (product && product.amount > 1) {
+    if (!rm && product && product.amount > 1)
       product.amount = product.amount - 1;
-      await user.save();
-    } else {
+    else
       user.set(
         "cart",
         user.cart.filter((item) => item.mkt !== mkt)
       );
-      await user.save();
-    }
+
+    await user.save();
     console.log("Remove product from cart");
     res
       .status(200)
