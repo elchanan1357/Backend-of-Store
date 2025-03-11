@@ -2,7 +2,16 @@ import express from "express";
 const server = express();
 
 import cors from "cors";
-server.use(cors());
+// server.use(cors());
+server.use(
+  cors({
+    origin: "http://127.0.0.1:5500", // בלי "//" בהתחלה
+    credentials: true,
+  })
+);
+
+import cookieParser from "cookie-parser";
+server.use(cookieParser());
 
 import bodyParser from "body-parser";
 server.use(bodyParser.urlencoded({ extended: true }));
