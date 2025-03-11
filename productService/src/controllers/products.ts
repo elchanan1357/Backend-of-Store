@@ -6,16 +6,17 @@ import { ProductStocksQueryDto } from "../dtos/getProductsStock";
 import { GetProductsQueryDto } from "../dtos/getProductDto";
 import { validateRequestMiddleware } from "../middlewares/validateRequest";
 import { ParamsTypeEnum } from "../types/request";
+import { ProdectsByMktsQueryDto } from "../dtos/getProdectsByMkts";
 
 
 export const setupProductsRoutes = (): Router => {
   const router = Router();
 
   router.get("/categories", validateRequestMiddleware(GetProductsByCategoriesQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {
-    const { categories, limit, offset } = req.query as unknown as GetProductsByCategoriesQueryDto;
+    const { categories, limit, offset, isInStock } = req.query as unknown as GetProductsByCategoriesQueryDto;
     
     try {
-      const productsByCategory = await productService.getProductsByCategories(categories, offset, limit);
+      const productsByCategory = await productService.getProductsByCategories(categories, offset, limit, isInStock);
     
       res.json(successResponse(productsByCategory));
     } catch (error: any) {
@@ -24,10 +25,10 @@ export const setupProductsRoutes = (): Router => {
   });
   
   router.get("/", validateRequestMiddleware(GetProductsQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {
-    const { limit, offset } = req.query as GetProductsQueryDto;
+    const { limit, offset, isInStock } = req.query as GetProductsQueryDto;
     
     try {
-      const products = await productService.getProducts(false, limit, offset);
+      const products = await productService.getProducts(false, limit, offset, isInStock);
     
       res.json(successResponse(products));
     } catch (error: any) {
@@ -45,6 +46,23 @@ export const setupProductsRoutes = (): Router => {
       return res.status(500).json(errorResponse(error?.message || "Internal Server Error", 500));
     }
   });
+
+  router.get(
+    "/mkts",
+    validateRequestMiddleware(ProductStocksQueryDto, ParamsTypeEnum.QUERY),
+    async (req, res) => {
+      const { mkts } = req.query as unknown as ProdectsByMktsQueryDto;
+  
+      try {
+        const products = await productService.getProductsByMkts(mkts);
+        return res.json(successResponse(products));
+      } catch (error: unknown) {
+        return res
+          .status(500)
+          .json(errorResponse((error as Error)?.message || "Internal Server Error", 500));
+      }
+    }
+  );
 
   return router;
 };

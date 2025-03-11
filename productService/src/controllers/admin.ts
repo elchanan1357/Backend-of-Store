@@ -10,10 +10,10 @@ export const setupAdminProductsRoutes = (): Router => {
   const router = Router();
 
   router.get("/", validateRequestMiddleware(GetProductsQueryDto, ParamsTypeEnum.QUERY), async (req, res) => {
-    const { limit, offset } = req.query as GetProductsQueryDto;
+    const { limit, offset, isInStock } = req.query as GetProductsQueryDto;
     
     try {
-      const products = await productService.getProducts(true, limit, offset);
+      const products = await productService.getProducts(true, limit, offset, isInStock);
     
       res.json(successResponse(products));
     } catch (error: any) {

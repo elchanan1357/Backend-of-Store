@@ -1,6 +1,18 @@
 import express from "express";
 const server = express();
 
+import cors from "cors";
+// server.use(cors());
+server.use(
+  cors({
+    origin: "http://127.0.0.1:5500", // בלי "//" בהתחלה
+    credentials: true,
+  })
+);
+
+import cookieParser from "cookie-parser";
+server.use(cookieParser());
+
 import bodyParser from "body-parser";
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -12,7 +24,9 @@ const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", () => console.log("connect to DB"));
 
-import userRouter from "./routers/userRouter";
-server.use("/user", userRouter);
+import AuthRouter from "./routers/authRouter";
+import favoritesCartRouters from "./routers/favoritesCartRouters";
+server.use("/user", AuthRouter);
+server.use("/user", favoritesCartRouters);
 
 export = server;
