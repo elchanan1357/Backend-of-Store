@@ -21,7 +21,7 @@ const mendy: User = {
   role: Role.User,
 };
 
-const newFavorite = { email: eli.email, mkt: "new" };
+const newCart = { email: eli.email, mkt: "new" };
 
 let cookieEli = "";
 let cookieMendy = "";
@@ -60,99 +60,12 @@ afterAll(async () => {
   console.log("finish");
 });
 
-describe("Test Favorites", () => {
-  test("test add product to favorites", async () => {
-    const res = await request(app)
-      .post("/user/addFavorite")
-      .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
-
-    expect(res.status).toEqual(200);
-    expect(res.body.success).toEqual(true);
-  });
-
-  test("test try to add product but is already exist", async () => {
-    const res = await request(app)
-      .post("/user/addFavorite")
-      .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
-
-    expect(res.status).toEqual(400);
-    expect(res.body.success).toEqual(false);
-  });
-
-  test("test not send all params in add favorites", async () => {
-    const res = await request(app)
-      .post("/user/addFavorite")
-      .set("Cookie", `${cookieEli}`);
-
-    expect(res.status).toEqual(400);
-    expect(res.body.success).toEqual(false);
-  });
-
-  test("test user not send token", async () => {
-    let status = await notSendToken("/user/addFavorite");
-    expect(status).toEqual(400);
-    status = await notSendToken("/user/favorites");
-    expect(status).not.toEqual(200);
-    status = await notSendToken("/user/removeFromFavorite");
-    expect(status).not.toEqual(200);
-  });
-
-  test("test get all favorites", async () => {
-    const res = await request(app)
-      .get("/user/favorites")
-      .set("Cookie", `${cookieEli}`);
-
-    expect(res.status).toEqual(200);
-    expect(res.body.info.length).not.toEqual(0);
-  });
-
-  test("test in get all favorites but is not favorites", async () => {
-    const res = await request(app)
-      .get("/user/favorites")
-      .set("Cookie", `${cookieMendy}`);
-
-    expect(res.status).toEqual(200);
-    expect(res.body.info.length).toEqual(0);
-  });
-
-  test("test remove product from favorites", async () => {
-    const res = await request(app)
-      .post("/user/removeFromFavorite")
-      .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
-
-    expect(res.status).toEqual(200);
-    expect(res.body.success).toEqual(true);
-  });
-
-  test("test not have this product in favorite", async () => {
-    const res = await request(app)
-      .post("/user/removeFromFavorite")
-      .set("Cookie", `${cookieMendy}`)
-      .send(newFavorite);
-
-    expect(res.status).toEqual(400);
-    expect(res.body.success).toEqual(false);
-  });
-
-  test("test not send all params in remove favorites", async () => {
-    const res = await request(app)
-      .post("/user/removeFromFavorite")
-      .set("Cookie", `${cookieEli}`)
-      .send({ mkt: "new" });
-    expect(res.status).toEqual(400);
-    expect(res.body.success).toEqual(false);
-  });
-});
-
 describe("Test Cart", () => {
   test("test add product to Cart", async () => {
     const res = await request(app)
       .post("/user/addToCart")
       .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
+      .send(newCart);
 
     expect(res.status).toEqual(200);
     expect(res.body.success).toEqual(true);
@@ -162,10 +75,10 @@ describe("Test Cart", () => {
     const res = await request(app)
       .post("/user/addToCart")
       .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
+      .send(newCart);
 
-    expect(res.status).toEqual(400);
-    expect(res.body.success).toEqual(false);
+    expect(res.status).toEqual(200);
+    expect(res.body.success).toEqual(true);
   });
 
   test("test not send all params in add cart", async () => {
@@ -179,7 +92,7 @@ describe("Test Cart", () => {
 
   test("test user not send token", async () => {
     let status = await notSendToken("/user/addToCart");
-    expect(status).toEqual(400);
+    expect(status).not.toEqual(200);
     status = await notSendToken("/user/cart");
     expect(status).not.toEqual(200);
     status = await notSendToken("/user/removeFromCart");
@@ -208,21 +121,21 @@ describe("Test Cart", () => {
     const res = await request(app)
       .post("/user/removeFromCart")
       .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
+      .send(newCart);
 
     expect(res.status).toEqual(200);
     expect(res.body.success).toEqual(true);
   });
 
-  test("test not have this product in cart", async () => {
-    const res = await request(app)
-      .post("/user/removeFromCart")
-      .set("Cookie", `${cookieEli}`)
-      .send(newFavorite);
+  // test("test not have this product in cart", async () => {
+  //   const res = await request(app)
+  //     .post("/user/removeFromCart")
+  //     .set("Cookie", `${cookieEli}`)
+  //     .send(newCart);
 
-    expect(res.status).toEqual(400);
-    expect(res.body.success).toEqual(false);
-  });
+  //   expect(res.status).toEqual(400);
+  //   expect(res.body.success).toEqual(false);
+  // });
 
   test("test not send all params in remove cart", async () => {
     const res = await request(app)

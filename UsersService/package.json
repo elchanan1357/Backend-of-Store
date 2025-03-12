@@ -9,7 +9,8 @@
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
     "testAuth": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testAuth",
-    "testFavoritesCart": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testFavoritesCart",
+    "testFavorites": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testFavorites",
+    "testCart": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testCart",
     "start": "tsc&& node dist/src/app.js",
     "devstart": "tsc&& nodemon dist/src/app.js",
     "server": "npx ts-node src/app.ts"
