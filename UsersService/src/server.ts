@@ -1,31 +1,33 @@
 import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+
+import mongoose from "mongoose";
+import { config } from "./utils/config";
+import cookieParser from "cookie-parser";
+
+import AuthRouter from "./routers/authRouter";
+import favoritesCartRouters from "./routers/favoritesCartRouters";
+
 const server = express();
 
-import cors from "cors";
-// server.use(cors());
 server.use(
   cors({
-    origin: "http://127.0.0.1:5500", // בלי "//" בהתחלה
+    origin: config.cross_origin,
     credentials: true,
   })
 );
 
-import cookieParser from "cookie-parser";
 server.use(cookieParser());
 
-import bodyParser from "body-parser";
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 
-import mongoose from "mongoose";
-import { config } from "./utils/config";
 mongoose.connect(config.db_url);
 const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", () => console.log("connect to DB"));
 
-import AuthRouter from "./routers/authRouter";
-import favoritesCartRouters from "./routers/favoritesCartRouters";
 server.use("/user", AuthRouter);
 server.use("/user", favoritesCartRouters);
 

@@ -11,7 +11,7 @@
     "testAuth": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testAuth",
     "testFavoritesCart": "tsc&& jest  --detectOpenHandles --forceExit ./dist/src/test/testFavoritesCart",
     "start": "tsc&& node dist/src/app.js",
-    "devstart": "tsc&& nodemon dist/src/app.js",
+    "dev": "nodemon --exec ts-node src/app.ts",
     "server": "npx ts-node src/app.ts"
   },
   "dependencies": {

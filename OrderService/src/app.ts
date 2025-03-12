@@ -8,7 +8,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import orderRoutes from './routes/order.routes';
-// import logger from './utils/logger';
 import { logger } from 'shared';
 
 // Ensure DB connection string exists
@@ -26,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan(process.env['LOGGER_MIDDLEWARE_FORMAT'] || 'dev'));
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: process.env.CORS_ORIGIN,
   credentials: true
 }));
 

@@ -16,7 +16,7 @@ function isValidEmail(email) {
 }
 
 function isValidPhone(num) {
-  return /^\d+$/.test(num);
+  return /(^\+)|\d+$/.test(num);
 }
 
 function checkInput(user: User) {
@@ -121,9 +121,9 @@ const login = async (req: Request, res: Response) => {
 
     res
       .cookie(config.auth_token_key, accessToken, {
-        sameSite: "lax",
+        sameSite: "strict",
         httpOnly: true,
-        secure:false,
+        secure: false,
         expires: new Date(Date.now() + 60 * 60 * 1000),
       })
       .status(200)

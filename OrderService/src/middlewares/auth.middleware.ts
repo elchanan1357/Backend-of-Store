@@ -7,7 +7,7 @@ import { sendErrorResponse } from '../utils/response-handler';
 
 dotenv.config();
 
-const SESSION_SECRET = process.env.SESSION_SECRET || 'supersecret';
+const SESSION_SECRET = process.env.SESSION_SECRET!;
 
 /**
  * Middleware to verify user is authenticated
