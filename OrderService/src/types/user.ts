@@ -6,7 +6,8 @@ export enum Role {
 export interface UserPayload {
     role: Role;
     email: string;
-    phone: string;
+    phone: number;
+    name: string
     id: string;
   }
   
