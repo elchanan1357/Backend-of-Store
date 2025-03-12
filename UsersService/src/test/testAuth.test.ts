@@ -25,11 +25,6 @@ afterAll(async () => {
   console.log("finish");
 });
 
-const invalidParams = async (registerUser) => {
-  let res = await request(app).post("/user/register").send(registerUser);
-  return res.statusCode;
-};
-
 describe("Test of authentication of user", () => {
   test("Not send all data in register", async () => {
     const tempUser = { ...user, phone: null };

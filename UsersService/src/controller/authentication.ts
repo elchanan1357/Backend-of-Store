@@ -110,10 +110,11 @@ const login = async (req: Request, res: Response) => {
       return;
     }
 
-    let accessToken: string = jwt.sign(
+    const accessToken: string = jwt.sign(
       {
         id: findUser._id.toString(),
         phone: findUser.phone,
+        name: findUser.name,
         email: findUser.email,
         role: findUser.role,
       },
