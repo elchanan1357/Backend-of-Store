@@ -20,9 +20,18 @@ function isValidPhone(num) {
 }
 
 function checkInput(user: User) {
-  if (!isValidName(user.name)) return false;
-  if (!isValidEmail(user.email)) return false;
-  if (!isValidPhone(user.phone)) return false;
+  if (!isValidName(user.name)) {
+    console.log("in valid name");
+    return false;
+  }
+  if (!isValidEmail(user.email)) {
+    console.log("in valid email");
+    return false;
+  }
+  if (!isValidPhone(user.phone)) {
+    console.log("in valid phone");
+    return false;
+  }
 
   return true;
 }

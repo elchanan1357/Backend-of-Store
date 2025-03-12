@@ -152,7 +152,7 @@ describe("Test of authentication of user", () => {
   test("test user not send token", async () => {
     const res = await request(app).get("/user/logout");
 
-    expect(res.status).toEqual(400);
+    expect(res.status).toEqual(401);
     expect(res.body.success).toBe(false);
   });
 });
