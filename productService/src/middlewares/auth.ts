@@ -19,6 +19,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     const decoded = jwt.verify(token, sessionSecret) as JwtPayload;
     
     const user: User = {
+      name: decoded?.name,
       phone: decoded?.phone,
       email: decoded?.email,
       role: decoded?.role,
