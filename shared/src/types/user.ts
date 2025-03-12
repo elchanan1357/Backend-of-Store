@@ -7,14 +7,15 @@ export interface UserPayload {
     role: Role;
     email: string;
     phone: number;
-    name: string
     id: string;
-  }
-  
-  declare global {
+    name?: string;
+    password?: string;
+}
+
+declare global {
     namespace Express {
-      interface Request {
-        user?: UserPayload;
-      }
+        interface Request {
+            user?: UserPayload;
+        }
     }
-  }
+}

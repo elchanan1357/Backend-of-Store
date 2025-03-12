@@ -1,6 +1,8 @@
 import Order, { IOrder, OrderItem } from '../models/order.model';
 import productService from './product.service';
-import logger from '../utils/logger';
+// import logger from '../utils/logger';
+import { logger } from 'shared';
+
 import { 
   handleServiceError, 
   createServiceSuccessResponse,

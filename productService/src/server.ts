@@ -22,6 +22,7 @@ export const createHttpServer = () => {
   app.use(
     cors({
       origin: config.corsOrigin,
+      credentials: true
     })
   );
 

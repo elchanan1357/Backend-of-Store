@@ -1,11 +1,12 @@
 {
-  "name": "express-ts-server",
+  "name": "product-service",
   "version": "1.0.0",
   "author": "Ariel Dayan",
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
-    "start": "npx ts-node src/app.ts"
+    "start": "npx ts-node src/app.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "class-transformer": "0.5.1",
@@ -18,7 +19,8 @@
     "mongoose": "8.10.0",
     "morgan": "^1.10.0",
     "nodemon": "3.1.9",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "shared": "workspace:^"
   },
   "devDependencies": {
     "@types/cookie-parser": "1.4.8",

@@ -3,7 +3,8 @@ import orderService from '../services/order.service';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CreateOrderDto } from '../dtos/create-order.dto';
-import logger from '../utils/logger';
+// import logger from '../utils/logger';
+import { logger } from 'shared';
 import {
   handleControllerError,
   sendValidationErrorResponse,
@@ -12,6 +13,7 @@ import {
   sendErrorResponse,
   verifyParam
 } from '../utils/response-handler';
+import { callToUser } from '../utils/voiceCallApi';
 
 export class OrderController {
   /**
@@ -19,13 +21,14 @@ export class OrderController {
    */
   async createOrder(req: Request, res: Response): Promise<void> {
     const startTime = Date.now();
-    
     try {
       logger.logRequest(req.method, req.path, req.body);
 
       if (!ensureAuthenticated(req, res, startTime)) {
         return;
       }
+
+      const {phone, name} = req.user!;
 
       // Use class-validator for validation
       const orderDto = plainToClass(CreateOrderDto, req.body);
@@ -54,6 +57,8 @@ export class OrderController {
         );
         return;
       }
+
+      callToUser(""+phone, result.data.order.get('totalAmount'), name)
 
       sendSuccessResponse(
         req, 

@@ -1,0 +1,19 @@
+{
+  "name": "backend-of-store",
+  "private": true,
+  "version": "1.0.0",
+  "author": {"name": "Yehiel Shamir"},
+  "scripts": {
+    "setup": "pnpm install",
+    "start": "pnpm --parallel run start --filter user-service --filter product-service --filter order-service",
+    "test": "pnpm parallel run test --filter order-service"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "workspaces": [
+    "OrderService",
+    "productService",
+    "UserService",
+    "shared"
+  ]
+}

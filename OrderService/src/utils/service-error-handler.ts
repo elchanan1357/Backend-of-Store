@@ -1,5 +1,5 @@
-import logger from './logger';
-
+// import logger from './logger';
+import { logger } from 'shared';
 /**
  * Standard error response format for services
  */

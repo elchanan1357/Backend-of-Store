@@ -7,4 +7,5 @@ export const config = {
   access_token: process.env.ACCESS_TOKEN_SECRET,
   token_expiration: process.env.TOKEN_EXPIRATION,
   auth_token_key: process.env.AUTH_TOKEN_KEY,
+  cross_origin: process.env['CORS_ORIGIN']
 };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ValidationError } from 'class-validator';
-import logger from './logger';
-
+// import logger from './logger';
+import { logger } from 'shared';
 /**
  * Extract validation errors into a flat, readable format
  */
