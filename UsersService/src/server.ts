@@ -5,7 +5,7 @@ import cors from "cors";
 // server.use(cors());
 server.use(
   cors({
-    origin: "http://127.0.0.1:5500", // בלי "//" בהתחלה
+    origin: "http://localhost:5500",
     credentials: true,
   })
 );

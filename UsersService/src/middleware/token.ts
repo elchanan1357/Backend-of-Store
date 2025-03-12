@@ -8,11 +8,17 @@ const middlewareInHeaders = async (
   next: NextFunction
 ) => {
   const authHeaders = req.headers.authorization;
-  if (authHeaders == null)
-    res.status(400).send({ error: "authentication missing" });
+  if (authHeaders == null) {
+    console.log("success: false, error: authentication missing");
+    res.status(401).send({ error: "authentication missing" });
+    return;
+  }
   const accessToken = authHeaders.split(" ")[1];
-  if (accessToken == null)
-    res.status(400).send({ success: false, error: "authentication missing" });
+  if (accessToken == null) {
+    console.log("success: false, error: authentication missing");
+    res.status(401).send({ success: false, error: "authentication missing" });
+    return;
+  }
 
   try {
     const user = jwt.verify(accessToken, config.access_token) as {
@@ -21,9 +27,11 @@ const middlewareInHeaders = async (
 
     console.log("The Token is valid");
     req.body.userID = user._id;
+    console.log("success: true, info: authentication success");
     next();
   } catch (err) {
-    res.status(400).send({ success: false, error: "fail validating token" });
+    console.log("success: false, error: authentication missing");
+    res.status(500).send({ success: false, error: "fail validating token" });
   }
 };
 
@@ -34,7 +42,8 @@ const middlewareInCookie = async (
 ) => {
   const accessToken = req.cookies?.[config.auth_token_key];
   if (!accessToken) {
-    res.status(400).send({ success: false, error: "authentication missing" });
+    console.log("success: false, error: authentication missing");
+    res.status(401).send({ success: false, error: "authentication missing" });
     return;
   }
 
@@ -44,9 +53,11 @@ const middlewareInCookie = async (
     };
 
     req.body.userID = user.id;
+    console.log("success: true, info: authentication success");
     next();
   } catch (err) {
-    res.status(400).send({ success: false, error: "fail validating token" });
+    console.log("success: false, error: authentication missing");
+    res.status(500).send({ success: false, error: "fail validating token" });
   }
 };
 
